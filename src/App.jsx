@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import AdminDashboard from "./components/AdminDashboard";
 import GuestDashboard from "./components/GuestDashboard";
 import {
   ArrowRight,
@@ -63,6 +64,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [authMode, setAuthMode] = useState("");
+  const [showAdminDashboard, setShowAdminDashboard] = useState(false);
   const [authForm, setAuthForm] = useState({
     name: "",
     email: "",
@@ -245,6 +247,8 @@ function App() {
       }
 
       setUser(null);
+      setShowDashboard(false);
+      setShowAdminDashboard(false);
       setBookingConfirmation(null);
       setSelectedHotel(null);
       setAuthError("");
@@ -366,10 +370,24 @@ function App() {
               </span>
               <button
                 className="nav-action"
-                onClick={() => setShowDashboard(true)}
+                onClick={() => {
+                  setShowDashboard(true);
+                  setShowAdminDashboard(false);
+                }}
               >
                 My Dashboard
               </button>
+              {user.role === "ADMIN" && (
+                <button
+                  className="nav-action"
+                  onClick={() => {
+                    setShowAdminDashboard(true);
+                    setShowDashboard(false);
+                  }}
+                >
+                  Admin Panel
+                </button>
+              )}
               <button className="nav-action" onClick={handleLogout}>
                 <LogOut size={15} /> Log out
               </button>
@@ -389,7 +407,9 @@ function App() {
           )}
         </div>
       </header>
-      {showDashboard && user ? (
+      {showAdminDashboard && user?.role === "ADMIN" ? (
+        <AdminDashboard onBack={() => setShowAdminDashboard(false)} />
+      ) : showDashboard && user ? (
         <GuestDashboard user={user} onBack={() => setShowDashboard(false)} />
       ) : (
         <main id="home">

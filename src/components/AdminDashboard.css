@@ -1,0 +1,503 @@
+.admin-page {
+  min-height: 80vh;
+  padding: 38px 6% 80px;
+  color: #24382c;
+  background: #f7f8f4;
+}
+
+.admin-container {
+  max-width: 1250px;
+  margin: auto;
+}
+
+.admin-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.admin-secondary,
+.admin-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 10px 14px;
+  border: 1px solid #dfe5dc;
+  border-radius: 8px;
+  color: #294b38;
+  background: white;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-primary {
+  border-color: #244b3b;
+  color: white;
+  background: #244b3b;
+}
+
+.admin-primary:hover {
+  background: #18372a;
+}
+
+.admin-secondary:hover {
+  background: #eef3ec;
+}
+
+.admin-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.admin-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #8b6d3e;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+}
+
+.admin-heading {
+  margin: 55px 0 35px;
+}
+
+.admin-eyebrow {
+  color: #9b7446;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.admin-heading h1 {
+  margin: 12px 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(35px, 5vw, 54px);
+  font-weight: 500;
+}
+
+.admin-heading h1 span {
+  color: #9b7446;
+}
+
+.admin-heading p {
+  color: #788078;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.admin-alert {
+  margin: 18px 0;
+  padding: 13px 15px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.admin-alert-error {
+  color: #963a32;
+  background: #ffefed;
+}
+
+.admin-alert-success {
+  color: #21653b;
+  background: #eaf7ec;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 25px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e2e7df;
+}
+
+.admin-tab {
+  padding: 11px 16px;
+  border: 0;
+  border-radius: 8px;
+  color: #707970;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-tab.active {
+  color: white;
+  background: #244b3b;
+}
+
+.admin-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 15px;
+}
+
+.admin-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  min-width: 0;
+  padding: 22px;
+  border: 1px solid #e6eae2;
+  border-radius: 12px;
+  background: white;
+}
+
+.admin-stat svg {
+  color: #9b7446;
+}
+
+.admin-stat span {
+  color: #7b827b;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.admin-stat strong {
+  color: #244b3b;
+  font-size: clamp(22px, 2.6vw, 30px);
+  overflow-wrap: anywhere;
+}
+
+.admin-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.admin-summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 25px;
+  border: 1px solid #e6eae2;
+  border-radius: 12px;
+  background: white;
+}
+
+.admin-summary-card h3 {
+  margin: 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.admin-summary-card > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eef0eb;
+  font-size: 12px;
+}
+
+.admin-summary-card > div span,
+.admin-summary-card p {
+  color: #7b827b;
+}
+
+.admin-summary-card > div strong {
+  color: #244b3b;
+}
+
+.admin-summary-card p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.admin-summary-card .admin-secondary,
+.admin-summary-card .admin-primary {
+  align-self: flex-start;
+}
+
+.admin-section {
+  padding: 25px;
+  border: 1px solid #e6eae2;
+  border-radius: 12px;
+  background: white;
+}
+
+.admin-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 25px;
+}
+
+.admin-section-header h2 {
+  margin: 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 27px;
+  font-weight: 500;
+}
+
+.admin-section-header p {
+  margin: 7px 0 0;
+  color: #7b827b;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.admin-hotel-form {
+  margin-bottom: 25px;
+  padding: 20px;
+  border: 1px solid #dfe7dc;
+  border-radius: 10px;
+  background: #f8faf6;
+}
+
+.admin-form-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.admin-form-heading h3 {
+  margin: 0;
+  font-size: 17px;
+}
+
+.admin-icon-button {
+  display: grid;
+  place-items: center;
+  width: 35px;
+  height: 35px;
+  border: 1px solid #e0e6de;
+  border-radius: 8px;
+  color: #526353;
+  background: white;
+  cursor: pointer;
+}
+
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.admin-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+  color: #45584a;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.admin-field input,
+.admin-field textarea {
+  width: 100%;
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid #dce3da;
+  border-radius: 7px;
+  outline: none;
+  color: #263a2e;
+  background: white;
+  font: inherit;
+  font-weight: 400;
+}
+
+.admin-field input:focus,
+.admin-field textarea:focus {
+  border-color: #789783;
+  box-shadow: 0 0 0 3px rgba(36, 75, 59, 0.08);
+}
+
+.admin-field textarea {
+  resize: vertical;
+}
+
+.admin-field-wide {
+  grid-column: 1 / -1;
+}
+
+.admin-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #e9ece6;
+  border-radius: 9px;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 12px;
+}
+
+.admin-table th {
+  padding: 14px;
+  color: #667268;
+  background: #f6f8f3;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.admin-table td {
+  padding: 15px 14px;
+  border-top: 1px solid #edf0e9;
+  color: #59675c;
+  vertical-align: middle;
+}
+
+.admin-table td strong {
+  display: block;
+  color: #294533;
+  font-weight: 600;
+}
+
+.admin-table td small {
+  display: block;
+  margin-top: 5px;
+  color: #879087;
+  font-size: 10px;
+  overflow-wrap: anywhere;
+}
+
+.admin-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.admin-small-button,
+.admin-approve,
+.admin-reject {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 30px;
+  padding: 6px 9px;
+  border: 1px solid #dce5d9;
+  border-radius: 6px;
+  color: #31513d;
+  background: #f7faf5;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-approve {
+  color: #21653b;
+  background: #eaf7ec;
+}
+
+.admin-reject {
+  color: #963a32;
+  background: #fff0ee;
+}
+
+.admin-pill {
+  display: inline-block;
+  padding: 6px 9px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.admin-pill.active,
+.admin-pill.confirmed {
+  color: #21653b;
+  background: #e7f5e9;
+}
+
+.admin-pill.inactive,
+.admin-pill.rejected,
+.admin-pill.cancelled {
+  color: #923a34;
+  background: #fcebea;
+}
+
+.admin-pill.pending {
+  color: #8a621e;
+  background: #fff2d7;
+}
+
+.admin-empty {
+  padding: 25px;
+  color: #788078;
+  font-size: 13px;
+  text-align: center;
+}
+
+.admin-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 300px;
+  color: #607365;
+  font-size: 13px;
+}
+
+@media (max-width: 900px) {
+  .admin-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-page {
+    padding: 25px 4% 55px;
+  }
+
+  .admin-heading {
+    margin-top: 38px;
+  }
+
+  .admin-label {
+    order: -1;
+    width: 100%;
+  }
+
+  .admin-stat-grid {
+    gap: 10px;
+  }
+
+  .admin-stat {
+    padding: 15px;
+  }
+
+  .admin-section {
+    padding: 15px;
+  }
+
+  .admin-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-field-wide {
+    grid-column: auto;
+  }
+
+  .admin-tabs {
+    overflow-x: auto;
+  }
+}
