@@ -80,6 +80,10 @@ function App() {
     checkOut: "",
     guests: "1",
   });
+  const [availableRooms, setAvailableRooms] = useState([]);
+  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [availabilityLoading, setAvailabilityLoading] = useState(false);
+  const [availabilityError, setAvailabilityError] = useState("");
   const [bookingBusy, setBookingBusy] = useState(false);
   const [bookingError, setBookingError] = useState("");
   const [bookingConfirmation, setBookingConfirmation] = useState(null);
@@ -262,6 +266,10 @@ function App() {
   function openHotel(hotel) {
     setSelectedHotel(hotel);
     setBookingForm({ checkIn: "", checkOut: "", guests: "1" });
+    setAvailableRooms([]);
+    setSelectedRoom(null);
+    setAvailabilityError("");
+    setAvailabilityLoading(false);
     setBookingError("");
     setBookingConfirmation(null);
   }
@@ -269,6 +277,9 @@ function App() {
   function closeHotel() {
     if (bookingBusy) return;
     setSelectedHotel(null);
+    setAvailableRooms([]);
+    setSelectedRoom(null);
+    setAvailabilityError("");
     setBookingError("");
     setBookingConfirmation(null);
   }
@@ -284,12 +295,82 @@ function App() {
         : {}),
     }));
 
+    setSelectedRoom(null);
+    setAvailableRooms([]);
+    setAvailabilityError("");
     setBookingError("");
   }
 
   const nights = countNights(bookingForm.checkIn, bookingForm.checkOut);
-  const total = selectedHotel
-    ? Number(selectedHotel.pricePerNight || 0) * nights
+
+  useEffect(() => {
+    if (
+      !selectedHotel ||
+      !bookingForm.checkIn ||
+      !bookingForm.checkOut ||
+      bookingForm.checkOut <= bookingForm.checkIn ||
+      bookingForm.checkIn < todayString()
+    ) {
+      setAvailableRooms([]);
+      setSelectedRoom(null);
+      setAvailabilityError("");
+      setAvailabilityLoading(false);
+      return;
+    }
+
+    const controller = new AbortController();
+
+    async function loadAvailableRooms() {
+      setAvailabilityLoading(true);
+      setAvailabilityError("");
+      setAvailableRooms([]);
+      setSelectedRoom(null);
+
+      try {
+        const params = new URLSearchParams({
+          hotelId: selectedHotel.id,
+          checkIn: bookingForm.checkIn,
+          checkOut: bookingForm.checkOut,
+          guests: bookingForm.guests,
+        });
+        const response = await fetch(
+          `${API}/rooms/availability?${params.toString()}`,
+          { credentials: "include", signal: controller.signal },
+        );
+        const data = await readResponse(response);
+
+        if (!Array.isArray(data)) {
+          throw new Error(
+            "Unexpected response from the room availability service.",
+          );
+        }
+
+        setAvailableRooms(data);
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          setAvailabilityError(
+            error.message ||
+              "Could not check room availability. Please try again.",
+          );
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setAvailabilityLoading(false);
+        }
+      }
+    }
+
+    loadAvailableRooms();
+    return () => controller.abort();
+  }, [
+    selectedHotel,
+    bookingForm.checkIn,
+    bookingForm.checkOut,
+    bookingForm.guests,
+  ]);
+
+  const total = selectedRoom
+    ? Number(selectedRoom.pricePerNight || 0) * nights
     : 0;
 
   async function handleBooking(event) {
@@ -305,6 +386,13 @@ function App() {
     }
 
     if (!selectedHotel || bookingBusy) return;
+
+    if (!selectedRoom) {
+      setBookingError(
+        "Select an available room before submitting your booking.",
+      );
+      return;
+    }
 
     if (
       !bookingForm.checkIn ||
@@ -324,6 +412,7 @@ function App() {
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          roomId: selectedRoom.id,
           hotelId: selectedHotel.id,
           guestName: user.name,
           guestEmail: user.email,
@@ -817,8 +906,18 @@ function App() {
                       <strong>{bookingForm.checkOut}</strong>
                     </div>
                     <div>
+                      <span>Room</span>
+                      <strong>
+                        {selectedRoom
+                          ? `${selectedRoom.roomType} · ${selectedRoom.roomNumber}`
+                          : bookingConfirmation.roomId || "Selected room"}
+                      </strong>
+                    </div>
+                    <div>
                       <span>Estimated total</span>
-                      <strong>{price(total)}</strong>
+                      <strong>
+                        {price(bookingConfirmation.totalPrice ?? total)}
+                      </strong>
                     </div>
                   </div>
                   <p className="booking-note">
@@ -858,7 +957,9 @@ function App() {
                   </p>
                   <div className="modal-price">
                     <div className="price">
-                      <strong>{price(selectedHotel.pricePerNight)}</strong>
+                      <strong>
+                        Rooms from {price(selectedHotel.pricePerNight)}
+                      </strong>
                       <span>/ night</span>
                     </div>
                     <span className="secure-note">
@@ -937,11 +1038,99 @@ function App() {
                           )}
                         </select>
                       </div>
-                      {nights > 0 && (
+
+                      <div className="room-selection">
+                        <div className="room-selection-heading">
+                          <div>
+                            <h4>Choose your room</h4>
+                            <p>
+                              Available rooms matching your dates and guest
+                              count
+                            </p>
+                          </div>
+                          {availabilityLoading && (
+                            <span className="availability-indicator">
+                              Checking...
+                            </span>
+                          )}
+                        </div>
+
+                        {!bookingForm.checkIn ||
+                        !bookingForm.checkOut ||
+                        bookingForm.checkOut <= bookingForm.checkIn ? (
+                          <p className="availability-hint">
+                            Choose check-in and check-out dates to see available
+                            rooms.
+                          </p>
+                        ) : availabilityLoading ? (
+                          <p className="availability-hint">
+                            Checking available rooms for your stay...
+                          </p>
+                        ) : availabilityError ? (
+                          <div className="availability-error" role="alert">
+                            {availabilityError}
+                          </div>
+                        ) : availableRooms.length === 0 ? (
+                          <div className="availability-empty">
+                            No rooms are available for these dates and guest
+                            count. Try different dates or fewer guests.
+                          </div>
+                        ) : (
+                          <div className="room-options">
+                            {availableRooms.map((room) => {
+                              const isSelected = selectedRoom?.id === room.id;
+                              return (
+                                <button
+                                  className={`room-option${isSelected ? " selected" : ""}`}
+                                  type="button"
+                                  key={room.id}
+                                  onClick={() => {
+                                    setSelectedRoom(room);
+                                    setBookingError("");
+                                  }}
+                                  aria-pressed={isSelected}
+                                >
+                                  <span className="room-option-main">
+                                    <span className="room-option-title">
+                                      <strong>
+                                        {String(
+                                          room.roomType || "ROOM",
+                                        ).replaceAll("_", " ")}
+                                      </strong>
+                                      <span>Room {room.roomNumber}</span>
+                                    </span>
+                                    <span className="room-capacity">
+                                      Up to {room.capacity}{" "}
+                                      {room.capacity === 1 ? "guest" : "guests"}
+                                    </span>
+                                    {Array.isArray(room.amenities) &&
+                                      room.amenities.length > 0 && (
+                                        <span className="room-amenities">
+                                          {room.amenities
+                                            .slice(0, 4)
+                                            .join(" · ")}
+                                        </span>
+                                      )}
+                                  </span>
+                                  <span className="room-option-price">
+                                    <strong>{price(room.pricePerNight)}</strong>
+                                    <span>/ night</span>
+                                    <span className="room-select-state">
+                                      {isSelected ? "Selected" : "Select room"}
+                                    </span>
+                                  </span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+
+                      {nights > 0 && selectedRoom && (
                         <div className="total-summary">
                           <div>
                             <span>
-                              {price(selectedHotel.pricePerNight)} × {nights}{" "}
+                              {price(selectedRoom.pricePerNight)} × {nights}{" "}
                               {nights === 1 ? "night" : "nights"}
                             </span>
                             <strong>Estimated total</strong>
@@ -958,12 +1147,18 @@ function App() {
                       )}
                       <button
                         className="primary-button booking-submit"
-                        disabled={bookingBusy}
+                        disabled={
+                          bookingBusy || availabilityLoading || !selectedRoom
+                        }
                         type="submit"
                       >
                         {bookingBusy
                           ? "Submitting request..."
-                          : "Submit booking request"}{" "}
+                          : availabilityLoading
+                            ? "Checking availability..."
+                            : !selectedRoom
+                              ? "Select a room to continue"
+                              : "Submit booking request"}{" "}
                         <ArrowRight size={17} />
                       </button>
                       <p className="booking-note">
